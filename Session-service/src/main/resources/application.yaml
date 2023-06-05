@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://localhost:3306/session3?useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=UTC
+    username: root
+    password: 123456
+  #    url: jdbc:mysql://1.12.63.198:3306/Session3?useUnicode=true&characterEncoding=UTF-8&useSSL=true&serverTimezone=UTC
+#    username: root
+#    password: Ll13422849999l...Mysql@#$
+  redis:
+    host: 192.168.10.129
+    port: 6382
+    password: 123456
+    jedis:
+      pool:
+        max-active: 100
+        min-idle: 10
+        max-idle: 100
+    timeout: 5000
+    database: 0
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    call-setters-on-nulls: true
+  global-config:
+    db-config:
+      id-type: auto
+  type-aliases-package: com.yang.session.Pojo
+  mapper-locations: classpath:Mapper/*.xml
+server:
+  port: 8888
+  servlet:
+    context-path: /yang

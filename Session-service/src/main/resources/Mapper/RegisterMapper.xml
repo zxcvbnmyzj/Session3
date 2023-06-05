@@ -1,0 +1,57 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yang.session.Mapper.RegisterMapper">
+
+    <!--    二级缓存-->
+<!--    <cache type="com.yang.session.Config.redis.RedisCache"/>-->
+
+    <insert id="RegisterAsset">
+        insert into assets
+        (AssetSN,AssetName,DepartmentLocationID,EmployeeID,AssetGroupID,Description,WarrantyDate) values
+            (#{assetSN}
+            ,#{assetName},
+             (select max(ID)  from departmentlocations),#{empId},
+             (select assetgroups.ID from assetgroups where assetgroups.`Name` = #{assetgroupName}),
+             #{description},#{warranty})
+    </insert>
+
+    <insert id="addDepartmentLocation">
+        insert into departmentlocations (DepartmentID,LocationID,StartDate,EndDate) values
+            ((select departments.ID from departments where departments.`Name` =  #{deptName}),
+             (select locations.ID from locations where locations.`Name` = #{locationName}),#{startDate},
+             #{warranty})
+    </insert>
+
+
+    <update id="updateAsset">
+        UPDATE assets SET AssetName = #{assetName},
+                          assets.Description = #{description},
+                          assets.WarrantyDate = #{warranty} where assets.ID = #{assetId}
+    </update>
+
+    <update id="updateDepartmentLocation">
+        update departmentlocations set  departmentlocations.EndDate = #{endDate}
+        where ID = (select DepartmentLocationID from assets where assets.ID = #{assetId})
+    </update>
+
+
+    <select id="getDeptIdByDeptName" resultType="java.lang.Integer">
+        select departments.ID from departments where departments.`Name` = #{deptName}
+    </select>
+
+
+    <select id="getGroupIdByGroupName" resultType="java.lang.Integer">
+        select assetgroups.ID from assetgroups
+        where assetgroups.`Name` = #{assetgroupName}
+    </select>
+
+    <select id="getMaxAssetId" resultType="java.lang.Integer">
+        select max(ID) from session3.assets
+    </select>
+
+    <select id="getMaxDepartmentLocationID" resultType="java.lang.Integer">
+        select max(ID) from session3.departmentlocations
+    </select>
+</mapper>

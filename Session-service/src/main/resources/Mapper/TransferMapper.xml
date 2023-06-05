@@ -1,0 +1,20 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper  namespace="com.yang.session.Mapper.TransferMapper">
+<!--    &lt;!&ndash;    二级缓存&ndash;&gt;-->
+<!--    <cache type="com.yang.session.Config.redis.RedisCache"/>-->
+
+    <update id="TransferAsset">
+        update departmentlocations set departmentlocations.DepartmentID =
+                                           (select departments.`ID` from departments where departments.`Name` = #{departmentName}),
+                                       departmentlocations.LocationID =
+                                               (select locations.ID from locations where locations.`Name` = #{newLocationName})
+        where departmentlocations.ID = (select assets.DepartmentLocationID from assets where assets.ID = #{assetId})
+    </update>
+
+    <update id="updateAssetSN">
+        update assets set assets.AssetSN = #{assetSN} where assets.ID = #{assetId}
+    </update>
+</mapper>

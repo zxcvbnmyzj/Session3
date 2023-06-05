@@ -1,0 +1,60 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yang.session.Mapper.ManagementMapper">
+
+
+    <!--    二级缓存-->
+<!--    <cache type="com.yang.session.Config.redis.RedisCache"/>-->
+
+    <select id="getAsset" resultType="map">
+        select assets.ID as assetId,assets.AssetSN,assets.AssetName,departments.Name as deptname,session3.assets.DepartmentLocationID,
+               assetgroups.`Name` as assetgname,assets.Description,assets.warrantyDate,locations.`Name` as locationName
+        from assets,departments,assetgroups,departmentlocations,employees,locations
+        where departments.ID = departmentlocations.DepartmentID and
+            employees.ID = assets.EmployeeID and
+            assetgroups.ID = assets.AssetGroupID and
+            locations.ID = departmentlocations.LocationID and
+            departmentlocations.ID = assets.DepartmentLocationID
+    </select>
+
+
+    <select id="getDeportment" resultType="java.lang.String">
+        select departments.Name from departments
+    </select>
+
+    <select id="getAssetGroup" resultType="java.lang.String">
+        select assetgroups.Name from assetgroups
+    </select>
+
+    <select id="getAssetList" resultType="java.util.Map" parameterType="java.util.List">
+        select assets.ID as assetId,assets.AssetSN,assets.AssetName,departments.Name as deptname,
+            assetgroups.`Name` as assetgname,assets.Description,assets.warrantyDate,locations.`Name` as locationName
+        from assets,departments,assetgroups,departmentlocations,employees,locations
+        <where>
+            departments.ID = departmentlocations.DepartmentID and
+            employees.ID = assets.EmployeeID and
+            assetgroups.ID = assets.AssetGroupID and
+            locations.ID = departmentlocations.LocationID and
+            departmentlocations.ID = assets.DepartmentLocationID and
+            <if test="assetSN!=null">
+                assets.AssetSN like concat('%',#{assetSN},'%') and
+            </if>
+            <if test="deptName!=null">
+                departments.`Name` = #{deptName} and
+            </if>
+            <if test="assetGroup!=null">
+                assetgroups.`Name` =  #{assetGroup}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getLocationList" resultType="java.lang.String">
+        select locations.`Name` from locations
+    </select>
+
+
+
+</mapper>

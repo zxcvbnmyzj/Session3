@@ -1,0 +1,38 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yang.session.Mapper.HistoryMapper">
+
+    <!--    二级缓存-->
+<!--    <cache type="com.yang.session.Config.redis.RedisCache"/>-->
+
+    <insert id="addHistory">
+        insert into assettransferlogs (AssetID,TransferDate,FromAssetSN,
+                                       ToAssetSN,FromDepartmentLocationID,ToDepartmentLocationID) values
+            (#{assetId},#{transferDate},#{assSN},#{assetSN},#{fromDeptLocationID},#{toDeptLocationnID})
+    </insert>
+
+
+    <select id="getHistoryList" resultType="java.util.Map">
+        select
+            aslog.ID as id,
+            AssetID as assetID,
+            TransferDate as transferDate,
+            FromAssetSN as oldAssetSN,
+            ToAssetSN as newAssetSN,
+            dmO.NAME as oldDepartment,
+            dmN.NAME as newDepartment,
+            dmlOld.Name as oldDepartmentLocation,
+            dmlNew.Name as newDepartmentLocation
+        from
+            assettransferlogs AS aslog
+                LEFT OUTER JOIN departmentlocations AS dmlO ON FromDepartmentLocationID = dmlO.ID
+                LEFT OUTER JOIN departmentlocations AS dmlN ON ToDepartmentLocationID = dmlN.ID
+                LEFT JOIN departments AS dmO ON dmlO.DepartmentID = dmO.ID
+                LEFT JOIN departments AS dmN ON dmlN.DepartmentID = dmN.ID
+                LEFT JOIN locations AS dmlOld ON dmlO.LocationID = dmlOld.ID
+                LEFT JOIN locations AS dmlNew ON dmlN.LocationID = dmlNew.ID
+                LEFT JOIN assets ON aslog.AssetID = assets.ID
+    </select>
+</mapper>
